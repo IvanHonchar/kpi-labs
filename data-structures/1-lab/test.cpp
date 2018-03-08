@@ -1,36 +1,44 @@
-#include <iostream>
+#define CATCH_CONFIG_MAIN
+
 #include "linked-list.h"
+#include "catch.hpp"
 
-using namespace std;
+TEST_CASE("pushing elements back") {
+  List<int> list;
+  for (int i = 0; i < 10; i++) list.insert(i, i);
+  for (int i = 0; i < 10; i++) REQUIRE(list.peek(i + 1) == i);
+}
 
-int main() {
-  List<char> list;
+TEST_CASE("pushing elements front") {
+  List<int> list;
+  for (int i = 0; i < 10; i++) list.insert(i, 0);
+  for (int i = 10; i >= 1; i--) REQUIRE(list.peek(i) == 10 - i);
+}
 
-  char array[10] = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j' };
-  for (int i = 0; i < 10; i++) {
-    list.insert(array[i], i); // insert 10 elements into the list
-  }
+TEST_CASE("pushing elements back and erasing front") {
+  List<int> list;
+  for (int i = 0; i < 10; i++) list.insert(i, i);
+  for (int i = 0; i < 10; i++) REQUIRE(list.erase(1) == i);
+}
 
-  list.insert('1', 0);    // insert '1' at the begin of the list
-  list.insert('2', 11);   // insert '2' at the end of the list
-  list.insert('3', 6);    // insert '3' after 6th element of the list
+TEST_CASE("pushing elements front and erasing back") {
+  List<int> list;
+  for (int i = 0; i < 10; i++) list.insert(i, 0);
+  for (int i = 10; i >= 1; i--) REQUIRE(list.erase(i) == 10 - i);
+}
 
-  try {                   // try to insert '4' after 20th element of list
-    list.insert('4', 20); // but we know that there are only 13 elements
-  }                       // so it will throw an error
-  catch(const char* err) {
-    cout << err << endl;  // catch error and log it
-  }
-
-  for (Node<char>* cur = list.begin();; cur = cur->next) {  // log list
-    if (cur != NULL) cout << cur->data << ' ';              // in direct order
-    if (cur == list.end()) break;
-  }
-  cout << endl;
-
-  for (Node<char>* cur = list.end();; cur = cur->prev) {    // log list
-    if (cur != NULL) cout << cur->data << ' ';              // in reverse order
-    if (cur == list.begin()) break;
-  }
-  cout << endl;
+TEST_CASE("random insertings and erasings") {
+  List<int> list;
+  list.insert(0, 0);
+  list.insert(1, 0);
+  list.insert(2, 2);
+  list.insert(3, 1);
+  list.insert(4, 2);
+  list.insert(5, 5);
+  list.erase(3);
+  list.erase(5);
+  list.erase(1);
+  REQUIRE(list.peek(1) == 3);
+  REQUIRE(list.peek(2) == 0);
+  REQUIRE(list.peek(3) == 2);
 }
